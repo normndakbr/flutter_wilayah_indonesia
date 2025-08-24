@@ -9,7 +9,7 @@ import '../services/wilayah_service.dart';
 /// A form-friendly cascading dropdown for Indonesian administrative areas
 /// (Province → Regency/City → District → Village). Uses offline JSON datasets
 /// and in-memory caching. See README for usage & examples.
-/// 
+///
 /// A cascading dropdown for Indonesian regions:
 /// Province → Regency/City → District → Village.
 ///
@@ -81,7 +81,10 @@ class _WilayahPickerState extends State<WilayahPicker> {
   String? _provId, _kabId, _kecId, _kelId;
 
   // Loading flags
-  bool _loadingProv = true, _loadingKab = false, _loadingKec = false, _loadingKel = false;
+  bool _loadingProv = true,
+      _loadingKab = false,
+      _loadingKec = false,
+      _loadingKel = false;
 
   // Request tokens to prevent race-condition applying stale responses
   int _kabReq = 0, _kecReq = 0, _kelReq = 0;
@@ -155,7 +158,10 @@ class _WilayahPickerState extends State<WilayahPicker> {
         DropdownButtonFormField<String>(
           value: _provId?.isNotEmpty == true ? _provId : null,
           items: _provList
-              .map((p) => DropdownMenuItem(value: p.id, child: Text(_disp(p.nama))))
+              .map(
+                (p) =>
+                    DropdownMenuItem(value: p.id, child: Text(_disp(p.nama))),
+              )
               .toList(),
           onChanged: (!widget.enabled || _loadingProv)
               ? null
@@ -195,9 +201,7 @@ class _WilayahPickerState extends State<WilayahPicker> {
           icon: const Icon(Icons.keyboard_arrow_down_rounded),
           iconSize: 24,
           isExpanded: true,
-          decoration: InputDecoration(
-            labelText: widget.provLabel,
-          ),
+          decoration: InputDecoration(labelText: widget.provLabel),
         ),
 
         widget.spacing,
@@ -206,7 +210,10 @@ class _WilayahPickerState extends State<WilayahPicker> {
         DropdownButtonFormField<String>(
           value: _kabId?.isNotEmpty == true ? _kabId : null,
           items: _kabList
-              .map((k) => DropdownMenuItem(value: k.id, child: Text(_disp(k.nama))))
+              .map(
+                (k) =>
+                    DropdownMenuItem(value: k.id, child: Text(_disp(k.nama))),
+              )
               .toList(),
           onChanged: (!widget.enabled || _loadingKab || _provId == null)
               ? null
@@ -245,7 +252,9 @@ class _WilayahPickerState extends State<WilayahPicker> {
           isExpanded: true,
           decoration: InputDecoration(
             labelText: widget.kabLabel,
-            helperText: (_provId == null) ? 'Pilih provinsi terlebih dahulu' : null,
+            helperText: (_provId == null)
+                ? 'Pilih provinsi terlebih dahulu'
+                : null,
           ),
         ),
 
@@ -255,7 +264,12 @@ class _WilayahPickerState extends State<WilayahPicker> {
         DropdownButtonFormField<String>(
           value: _kecId?.isNotEmpty == true ? _kecId : null,
           items: _kecList
-              .map((kec) => DropdownMenuItem(value: kec.id, child: Text(_disp(kec.nama))))
+              .map(
+                (kec) => DropdownMenuItem(
+                  value: kec.id,
+                  child: Text(_disp(kec.nama)),
+                ),
+              )
               .toList(),
           onChanged: (!widget.enabled || _loadingKec || _kabId == null)
               ? null
@@ -272,7 +286,8 @@ class _WilayahPickerState extends State<WilayahPicker> {
                   widget.onKecamatanChanged?.call(
                     _kecList.firstWhere(
                       (e) => e.id == _kecId,
-                      orElse: () => Kecamatan(id: '', idKabupaten: '', nama: ''),
+                      orElse: () =>
+                          Kecamatan(id: '', idKabupaten: '', nama: ''),
                     ),
                   );
 
@@ -298,7 +313,9 @@ class _WilayahPickerState extends State<WilayahPicker> {
           isExpanded: true,
           decoration: InputDecoration(
             labelText: widget.kecLabel,
-            helperText: (_kabId == null) ? 'Pilih kabupaten/kota terlebih dahulu' : null,
+            helperText: (_kabId == null)
+                ? 'Pilih kabupaten/kota terlebih dahulu'
+                : null,
           ),
         ),
 
@@ -309,7 +326,12 @@ class _WilayahPickerState extends State<WilayahPicker> {
           DropdownButtonFormField<String>(
             value: _kelId?.isNotEmpty == true ? _kelId : null,
             items: _kelList
-                .map((kel) => DropdownMenuItem(value: kel.id, child: Text(_disp(kel.nama))))
+                .map(
+                  (kel) => DropdownMenuItem(
+                    value: kel.id,
+                    child: Text(_disp(kel.nama)),
+                  ),
+                )
                 .toList(),
             onChanged: (!widget.enabled || _loadingKel || _kecId == null)
                 ? null
@@ -319,7 +341,8 @@ class _WilayahPickerState extends State<WilayahPicker> {
                     widget.onKelurahanChanged?.call(
                       _kelList.firstWhere(
                         (e) => e.id == _kelId,
-                        orElse: () => Kelurahan(id: '', idKecamatan: '', nama: ''),
+                        orElse: () =>
+                            Kelurahan(id: '', idKecamatan: '', nama: ''),
                       ),
                     );
                   },
@@ -328,7 +351,9 @@ class _WilayahPickerState extends State<WilayahPicker> {
             isExpanded: true,
             decoration: InputDecoration(
               labelText: widget.kelLabel,
-              helperText: (_kecId == null) ? 'Pilih kecamatan terlebih dahulu' : null,
+              helperText: (_kecId == null)
+                  ? 'Pilih kecamatan terlebih dahulu'
+                  : null,
             ),
           ),
         ],
