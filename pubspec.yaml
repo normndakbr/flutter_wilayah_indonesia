@@ -21,3 +21,5 @@ flutter:
 assets:
   - lib/assets/provinsi.json
   - lib/assets/kabupaten.json
+  - lib/assets/kecamata.json
+  - lib/assets/kelurahan.json

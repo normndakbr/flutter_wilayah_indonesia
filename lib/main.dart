@@ -4,7 +4,7 @@ import 'package:flutter_wilayah_indonesia/services/wilayah_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final provinsiList = await WilayahService.loadProvinsi();
+  final provinsiList = await WilayahService.getProvinsi(); // <— ganti ini
   for (final prov in provinsiList) {
     print('${prov.id}: ${prov.nama}');
   }
@@ -18,9 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Scaffold(
-        body: Center(child: Text('Wilayah Indonesia')),
-      ),
+      home: Scaffold(body: Center(child: Text('Wilayah Indonesia'))),
     );
   }
 }
