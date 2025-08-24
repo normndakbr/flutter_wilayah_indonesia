@@ -6,6 +6,10 @@ import '../models/kecamatan_model.dart';
 import '../models/kelurahan_model.dart';
 import '../services/wilayah_service.dart';
 
+/// A form-friendly cascading dropdown for Indonesian administrative areas
+/// (Province → Regency/City → District → Village). Uses offline JSON datasets
+/// and in-memory caching. See README for usage & examples.
+/// 
 /// A cascading dropdown for Indonesian regions:
 /// Province → Regency/City → District → Village.
 ///
@@ -77,10 +81,7 @@ class _WilayahPickerState extends State<WilayahPicker> {
   String? _provId, _kabId, _kecId, _kelId;
 
   // Loading flags
-  bool _loadingProv = true,
-      _loadingKab = false,
-      _loadingKec = false,
-      _loadingKel = false;
+  bool _loadingProv = true, _loadingKab = false, _loadingKec = false, _loadingKel = false;
 
   // Request tokens to prevent race-condition applying stale responses
   int _kabReq = 0, _kecReq = 0, _kelReq = 0;
@@ -148,15 +149,13 @@ class _WilayahPickerState extends State<WilayahPicker> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // PROVINSI
         DropdownButtonFormField<String>(
           value: _provId?.isNotEmpty == true ? _provId : null,
           items: _provList
-              .map(
-                (p) =>
-                    DropdownMenuItem(value: p.id, child: Text(_disp(p.nama))),
-              )
+              .map((p) => DropdownMenuItem(value: p.id, child: Text(_disp(p.nama))))
               .toList(),
           onChanged: (!widget.enabled || _loadingProv)
               ? null
@@ -192,10 +191,12 @@ class _WilayahPickerState extends State<WilayahPicker> {
                     _loadingKab = false;
                   });
                 },
+          // ↓ selalu panah bawah
+          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+          iconSize: 24,
+          isExpanded: true,
           decoration: InputDecoration(
             labelText: widget.provLabel,
-            helperText: null,
-            suffixIcon: _loadingProv ? const _Busy() : null,
           ),
         ),
 
@@ -205,10 +206,7 @@ class _WilayahPickerState extends State<WilayahPicker> {
         DropdownButtonFormField<String>(
           value: _kabId?.isNotEmpty == true ? _kabId : null,
           items: _kabList
-              .map(
-                (k) =>
-                    DropdownMenuItem(value: k.id, child: Text(_disp(k.nama))),
-              )
+              .map((k) => DropdownMenuItem(value: k.id, child: Text(_disp(k.nama))))
               .toList(),
           onChanged: (!widget.enabled || _loadingKab || _provId == null)
               ? null
@@ -223,7 +221,6 @@ class _WilayahPickerState extends State<WilayahPicker> {
                     _loadingKec = true;
                   });
 
-                  // callback
                   widget.onKabupatenChanged?.call(
                     _kabList.firstWhere(
                       (e) => e.id == _kabId,
@@ -243,12 +240,12 @@ class _WilayahPickerState extends State<WilayahPicker> {
                     _loadingKec = false;
                   });
                 },
+          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+          iconSize: 24,
+          isExpanded: true,
           decoration: InputDecoration(
             labelText: widget.kabLabel,
-            helperText: (_provId == null)
-                ? 'Pilih provinsi terlebih dahulu'
-                : null,
-            suffixIcon: _loadingKab ? const _Busy() : null,
+            helperText: (_provId == null) ? 'Pilih provinsi terlebih dahulu' : null,
           ),
         ),
 
@@ -258,12 +255,7 @@ class _WilayahPickerState extends State<WilayahPicker> {
         DropdownButtonFormField<String>(
           value: _kecId?.isNotEmpty == true ? _kecId : null,
           items: _kecList
-              .map(
-                (kec) => DropdownMenuItem(
-                  value: kec.id,
-                  child: Text(_disp(kec.nama)),
-                ),
-              )
+              .map((kec) => DropdownMenuItem(value: kec.id, child: Text(_disp(kec.nama))))
               .toList(),
           onChanged: (!widget.enabled || _loadingKec || _kabId == null)
               ? null
@@ -277,12 +269,10 @@ class _WilayahPickerState extends State<WilayahPicker> {
                     _loadingKel = widget.includeKelurahan;
                   });
 
-                  // callback
                   widget.onKecamatanChanged?.call(
                     _kecList.firstWhere(
                       (e) => e.id == _kecId,
-                      orElse: () =>
-                          Kecamatan(id: '', idKabupaten: '', nama: ''),
+                      orElse: () => Kecamatan(id: '', idKabupaten: '', nama: ''),
                     ),
                   );
 
@@ -303,12 +293,12 @@ class _WilayahPickerState extends State<WilayahPicker> {
                     _loadingKel = false;
                   });
                 },
+          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+          iconSize: 24,
+          isExpanded: true,
           decoration: InputDecoration(
             labelText: widget.kecLabel,
-            helperText: (_kabId == null)
-                ? 'Pilih kabupaten/kota terlebih dahulu'
-                : null,
-            suffixIcon: _loadingKec ? const _Busy() : null,
+            helperText: (_kabId == null) ? 'Pilih kabupaten/kota terlebih dahulu' : null,
           ),
         ),
 
@@ -319,12 +309,7 @@ class _WilayahPickerState extends State<WilayahPicker> {
           DropdownButtonFormField<String>(
             value: _kelId?.isNotEmpty == true ? _kelId : null,
             items: _kelList
-                .map(
-                  (kel) => DropdownMenuItem(
-                    value: kel.id,
-                    child: Text(_disp(kel.nama)),
-                  ),
-                )
+                .map((kel) => DropdownMenuItem(value: kel.id, child: Text(_disp(kel.nama))))
                 .toList(),
             onChanged: (!widget.enabled || _loadingKel || _kecId == null)
                 ? null
@@ -334,20 +319,22 @@ class _WilayahPickerState extends State<WilayahPicker> {
                     widget.onKelurahanChanged?.call(
                       _kelList.firstWhere(
                         (e) => e.id == _kelId,
-                        orElse: () =>
-                            Kelurahan(id: '', idKecamatan: '', nama: ''),
+                        orElse: () => Kelurahan(id: '', idKecamatan: '', nama: ''),
                       ),
                     );
                   },
+            icon: const Icon(Icons.keyboard_arrow_down_rounded),
+            iconSize: 24,
+            isExpanded: true,
             decoration: InputDecoration(
               labelText: widget.kelLabel,
-              helperText: (_kecId == null)
-                  ? 'Pilih kecamatan terlebih dahulu'
-                  : null,
-              suffixIcon: _loadingKel ? const _Busy() : null,
+              helperText: (_kecId == null) ? 'Pilih kecamatan terlebih dahulu' : null,
             ),
           ),
         ],
+
+        // ↓ satu indikator status di bawah semua dropdown
+        _buildLoadingHint(),
       ],
     );
   }
@@ -356,7 +343,7 @@ class _WilayahPickerState extends State<WilayahPicker> {
 
   // Very simple Title Case for uppercase dataset + keep common acronyms
   String _titleCase(String input) {
-    final words = input.toLowerCase().split(RegExp(r'\s+')).map((w) {
+    final words = input.toLowerCase().split(RegExp(r'\\s+')).map((w) {
       if (w.isEmpty) return w;
       const acronyms = {'dki', 'diy', 'ri', 'tk', 'rt', 'rw'};
       if (acronyms.contains(w)) return w.toUpperCase();
@@ -364,20 +351,32 @@ class _WilayahPickerState extends State<WilayahPicker> {
     }).toList();
     return words.join(' ');
   }
-}
 
-class _Busy extends StatelessWidget {
-  const _Busy();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(10),
-      child: SizedBox(
-        width: 16,
-        height: 16,
-        child: CircularProgressIndicator(strokeWidth: 2),
+  // ---- Loading status area (single row) ----
+  Widget _buildLoadingHint() {
+    final t = _loadingText();
+    if (t == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          const SizedBox(width: 8),
+          Text(t),
+        ],
       ),
     );
+  }
+
+  String? _loadingText() {
+    if (_loadingProv) return 'Memuat data provinsi...';
+    if (_loadingKab) return 'Memuat data kabupaten/kota...';
+    if (_loadingKec) return 'Memuat data kecamatan...';
+    if (_loadingKel) return 'Memuat data kelurahan/desa...';
+    return null;
   }
 }

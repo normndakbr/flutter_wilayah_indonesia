@@ -1,7 +1,14 @@
 name: flutter_wilayah_indonesia
-description: "A Flutter package that provides complete offline data of Indonesian administrative regions (Province, City/District, Subdistrict, Village) and ready-to-use cascading dropdown widgets for seamless form integration."
-version: 0.0.1
-homepage:
+description: Cascading Indonesian regions (Prov/Kab/Kec/Kel) with offline JSON, caching, and ready-to-use WilayahPicker widget.
+version: 0.1.0
+
+homepage: https://github.com/normndakbr/flutter_wilayah_indonesia
+repository: https://github.com/normndakbr/flutter_wilayah_indonesia
+issue_tracker: https://github.com/normndakbr/flutter_wilayah_indonesia/issues
+topics:
+  - indonesia
+  - address
+  - wilayah
 
 environment:
   sdk: ^3.8.1
@@ -18,8 +25,8 @@ dev_dependencies:
   http: ^1.5.0
 
 flutter:
-assets:
-  - lib/assets/provinsi.json
-  - lib/assets/kabupaten.json
-  - lib/assets/kecamata.json
-  - lib/assets/kelurahan.json
+  assets:
+    - assets/wilayah/provinsi.json
+    - assets/wilayah/kabupaten.json
+    - assets/wilayah/kecamatan.json
+    - assets/wilayah/kelurahan.json

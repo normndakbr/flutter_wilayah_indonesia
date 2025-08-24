@@ -4,7 +4,7 @@ import 'package:flutter_wilayah_indonesia/services/wilayah_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final provinsiList = await WilayahService.getProvinsi(); // <— ganti ini
+  final provinsiList = await WilayahService.getProvinsi();
   for (final prov in provinsiList) {
     print('${prov.id}: ${prov.nama}');
   }
